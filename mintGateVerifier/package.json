@@ -1,0 +1,20 @@
+{
+  "name": "mintgate-verifier",
+  "version": "1.0.0",
+  "description": "npm package to connect and verify mingate wallet ownership",
+  "main": "./dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "files": [
+    "dist",
+    "readMe.md"
+  ],
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^4.4.4"
+  }
+}

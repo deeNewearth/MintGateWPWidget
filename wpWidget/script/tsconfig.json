@@ -1,0 +1,23 @@
+{
+    "compilerOptions": {
+        "target": "es6",
+        "module": "commonjs",
+        "strict": true,
+        "declaration": true,
+        "outDir": "./dist",
+        "baseUrl": ".",
+        "paths": {
+            "mintgate-verifier": [
+                "./mintGateVerifier/src"
+            ],
+            "mintgate-verifier/*": [
+                "./mintGateVerifier/src/*"
+            ]
+        }
+    },
+    "exclude": [
+        "tests",
+        "dist",
+        "node_modules"
+    ]
+}

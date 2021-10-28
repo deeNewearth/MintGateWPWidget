@@ -1,0 +1,6 @@
+https://codeburst.io/developing-and-publishing-a-typescript-npm-package-d9fc643d4229
+
+
+mklink /D  mintGateVerifier ..\..\mintGateVerifier
+
+
