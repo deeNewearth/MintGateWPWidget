@@ -8,10 +8,10 @@
         "baseUrl": ".",
         "paths": {
             "mintgate-verifier": [
-                "./mintGateVerifier/src"
+                "../../mintGateVerifier/src"
             ],
             "mintgate-verifier/*": [
-                "./mintGateVerifier/src/*"
+                "../../mintGateVerifier/src/*"
             ]
         }
     },
