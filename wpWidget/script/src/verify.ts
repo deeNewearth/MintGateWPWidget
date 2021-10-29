@@ -1,8 +1,25 @@
-import {add1} from 'mintgate-verifier';
+import {MintgateVerifier} from 'mintgate-verifier';
 
 export function verifyOwnerShip(){
-    debugger;
-    const t = add1(2,3);
-    console.log(`hello world 1111 -> ${t}`);
+    
+
+    const mv = new MintgateVerifier();
+
+    mv.providers('app');
+
+    mv.checkLink();
+
+    const check = async ()=>{
+        try{
+            //await connect();
+            console.log(`hello world 1111 -> 777`);
+        }
+        catch(err){
+            console.log(err);
+        }
+    }
+
+    check();
+
 }
 

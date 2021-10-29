@@ -1,0 +1,27 @@
+.w3ProviderList {
+    text-align: center;
+    color: #786969;
+}
+
+.w3ProviderList .thePrompt {
+    font-size: x-large;
+    font-weight: bold;
+    margin: 1rem;
+}
+
+.w3ProviderList .pLogo {
+    height: 5rem;
+    width: auto;
+}
+
+.w3ProviderList .w3Provider {
+    padding: 0.5rem;
+    margin: 0.5rem;
+    display: inline-block;
+    color: #786969;
+}
+
+.w3ProviderList .w3Provider button {
+    border-color: #cccccc0a;
+    color: #786969;
+}

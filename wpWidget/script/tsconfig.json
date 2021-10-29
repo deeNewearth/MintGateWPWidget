@@ -1,21 +1,42 @@
 {
     "compilerOptions": {
-        "target": "ESNext",
+        /*"target": "ESNext",
         "module": "ESNext",
         "lib": [
             "ESNext",
             "DOM"
         ],
+        
+        "lib": [
+            "es6",
+            "es7",
+            "dom",
+            "esnext"
+        ],
+        
+        "module": "es6",
+        "target": "es5",
+        
         "moduleResolution": "Node",
+
+        "jsx": "react-jsx",
+        */
+        "module": "commonjs",
+        "jsx": "react",
+        "jsxFactory": "h",
+        "target": "es5",
+        
         "strict": true,
         "sourceMap": true,
-        "resolveJsonModule": true,
+        //"noUnusedLocals": true,
+        //"noUnusedParameters": true,
+        //"noImplicitReturns": true,
+
         "esModuleInterop": true,
-        "noEmit": true,
-        "noUnusedLocals": true,
-        "noUnusedParameters": true,
-        "noImplicitReturns": true,
-        "outDir": "./dist",
+
+        //"skipLibCheck": true,
+        
+        "outDir": "./dist/",
         "baseUrl": ".",
         "paths": {
             "mintgate-verifier": [
@@ -30,5 +51,8 @@
         "tests",
         "dist",
         "node_modules"
+    ],
+    "include": [
+        "src/**/*"
     ]
 }

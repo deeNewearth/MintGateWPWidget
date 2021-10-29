@@ -1,3 +1,4 @@
+/*
 import { verifyOwnerShip } from "../src/verify";
 import { expect } from "chai";
 import {describe} from "mocha";
@@ -10,3 +11,4 @@ describe("verify unit tests", (): void => {
     });
     
 });
+*/
