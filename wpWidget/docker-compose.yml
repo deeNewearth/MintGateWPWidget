@@ -1,0 +1,35 @@
+version: '2'
+
+services:
+
+  db:
+      image: mysql:5.7
+      environment:
+       MYSQL_ROOT_PASSWORD: somewordpress
+       MYSQL_DATABASE: wordpress
+       MYSQL_USER: wordpress
+       MYSQL_PASSWORD: wordpress
+      volumes:
+#      utility folder to easiy copy stuff back and forth
+       - ./tmp:/s-tmp
+
+
+  wordpress: 
+    build: ./wordpressDebug
+    image: test-wp
+    
+    depends_on:
+      - db
+    ports:
+      - 56395:80
+    volumes:
+
+      - ./plugin:/var/www/html/wp-content/plugins/mintgate-verifier
+#     Uncomment the following line, to debug wordpress php code    
+#      - ./filesForDebug:/var/www/html
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+#      XDEBUG_CONFIG: remote_host=host.docker.internal remote_port=9000 remote_enable=1
+      PHP_EXTENSION_XDEBUG: 1
