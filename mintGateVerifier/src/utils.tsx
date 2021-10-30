@@ -10,8 +10,11 @@ export interface IAsyncResult<T> extends IAsyncResultBase {
     result?: T;
 }
 
-export function Spinner(){
-    return <div class="ne-ripple"><div></div><div></div></div>;
+export function Spinner(props?: { prompt?: string }) {
+    return <div className="ne-spinner">
+        <div className="spinner-prompt"><small>{props?.prompt || 'please wait...'}</small></div>
+        <div class="ne-ripple"><div></div><div></div></div>
+    </div>;
 }
 
 
@@ -48,20 +51,25 @@ export async function checkFetchErrorAsync(responsePromise: Promise<Response>) {
         if (!response.headers)
             console.error('checkFetchError called with non http response');
 
-        const contentType = response.headers.get('content-type');
+        try {
+            const contentType = response.headers.get('content-type');
 
-        if (contentType && contentType.indexOf('application/json') != -1) {
-            const err = await response.json();
+            if (contentType && contentType.indexOf('application/json') != -1) {
+                const err = await response.json();
+                throw new Error(err?.Message || err?.message || 'unknown error');
+            } else if (contentType && contentType.indexOf('text/plain') != -1) {
+                const err = await response.text();
 
-            throw new Error(err?.Message||'unknown error');
+                throw new Error(response.statusText + ' : ' + err);
+            }
+        } catch (err) {
+            console.debug('we don\'t have error body');
 
-        }else if(contentType && contentType.indexOf('text/plain') != -1){
-            const err = await response.text();
-
-            throw new Error(response.statusText + ' : ' + err);
         }
-        else {
-            throw new Error(response.statusText );
+
+
+        {
+            throw new Error(response.statusText);
         }
 
     }

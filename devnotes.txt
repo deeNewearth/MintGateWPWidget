@@ -1,6 +1,19 @@
 https://codeburst.io/developing-and-publishing-a-typescript-npm-package-d9fc643d4229
 
 
+To dev
+
+start
+cd ./wpWidget/script
+npm run watch
+
+///in the other cmd window
+cd ./wpWidget
+docker-compose up
+
+
+///site available at http://localhost:56395
+/// to debug wallet checker open chrome://inspect
 
 
 

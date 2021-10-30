@@ -28,3 +28,40 @@
     background-color:  #9f9b9b61;
     background:  #9f9b9b61;
 }
+
+.w3ProviderList .ne-gated-holder{
+    position: relative;
+}
+
+.w3ProviderList .ne-gated-lock{
+    position: absolute;
+    top:10px;
+    right:10px;
+    text-align: right;
+    
+}
+
+.w3ProviderList .ne-gated-lock-open button,
+.w3ProviderList .ne-gated-lock-open{
+    background-color: #9e9e9ee6;
+}
+
+.w3ProviderList .ne-gated-lock-closed button{
+    background-color: #fafafa2b;
+}
+
+.w3ProviderList .ne-gated-lock button{
+    width: 35px;
+    height: 35px;
+    
+    background-image: url('./locked.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    padding: 0;
+}
+
+.w3ProviderList .ne-gated-lock .ne-gated-lock-menu{
+    min-width: 9em;
+    padding: 0.2em;
+    text-align: left;
+}

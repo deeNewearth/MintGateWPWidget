@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon  --verbose  --watch src/**/* -e ts,json --exec node --inspect=0.0.0.0:9229 -r ts-node/register ./src/app.ts"
+    "build": "tsc",
+    "dev": "nodemon  --verbose  --watch src/**/* -e ts,json --exec node --inspect=0.0.0.0:9229 -r ts-node/register ./src/app.ts",
+    "start": "node ./dist/src/app.js"
   },
   "keywords": [],
   "author": "",

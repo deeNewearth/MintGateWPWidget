@@ -3,7 +3,22 @@
 class WalletData{
 
     //Used to verify that wallet ownership
-    public $nounce=""; 
+    public $nounce ="";
+    
+    //verified public address
+    public $address ="";
+
+    public static function fromSession(){
+        if(!array_key_exists('wallet',$_SESSION))
+            return null;
+
+        $serData = $_SESSION['wallet'];
+        if(!isset($serData) || strlen($serData) == 0)
+            return null;
+
+        return unserialize($serData);
+    }
+
 
     public static function newNounce(){
         $newData = new WalletData();

@@ -52,7 +52,17 @@ export class MintgateVerifier {
             return;
         }
 
-        this.token = { divId, mintTokenId, nounce };
+        const postId = rootDiv.getAttribute('postId');
+
+        if (!postId) {
+            console.error(`divId ${divId} is missing attribute postId`);
+            return;
+        }
+
+        const verifiedAddress = rootDiv.getAttribute('verifiedAddress')||undefined;
+
+
+        this.token = { divId, mintTokenId, nounce, postId, verifiedAddress };
 
     }
 
