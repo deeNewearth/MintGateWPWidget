@@ -2,3 +2,16 @@
  * All of the CSS for your admin-specific functionality should be
  * included in this file.
  */
+
+.ne_minigate_settings textarea {
+    width: 100%;
+    max-width: 800px;
+}
+
+.ne_minigate_settings .settings_footer {
+    text-align: center;
+}
+
+.ne_minigate_settings .settings_footer .button-primary {
+    padding: 10px 80px;
+}

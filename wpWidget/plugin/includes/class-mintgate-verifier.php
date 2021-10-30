@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * The file that defines the core plugin class
  *
@@ -156,6 +157,12 @@ class Mintgate_Verifier {
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+		$this->loader->add_action( 'add_meta_boxes', $plugin_admin, 'meta_box_add' );
+		$this->loader->add_action( 'save_post', $plugin_admin, 'save' );
+
+		
+		$this->loader->add_action( 'admin_init', $plugin_admin, 'register_settings' );
+		$this->loader->add_action( 'admin_menu', $plugin_admin, 'admin_menu' );
 
 	}
 
@@ -172,7 +179,9 @@ class Mintgate_Verifier {
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
+		$this->loader->add_filter("the_content", $plugin_public, 'filter_the_content' );
 
+		$this->loader->add_action( 'rest_api_init', $plugin_public, 'register_api' );
 	}
 
 	/**

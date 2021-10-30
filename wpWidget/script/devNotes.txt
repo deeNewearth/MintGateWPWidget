@@ -1,0 +1,5 @@
+To run script we are doing  
+npx webpack serve --mode=development 
+
+
+npm run build-dev

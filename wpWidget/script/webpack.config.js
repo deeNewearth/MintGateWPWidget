@@ -27,7 +27,8 @@ module.exports = {
     new NodePolyfillPlugin()
   ],
   output: {
-    filename: 'bundle.js',
-    path: path.resolve(__dirname, 'dist'),
+    filename: 'mint-verifier.js',
+    path: path.resolve(__dirname, '../plugin/public/js/dist'),
+    publicPath: '/wp-content/plugins/mintgate-verifier/public/js/dist/'
   },
 };

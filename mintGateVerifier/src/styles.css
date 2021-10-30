@@ -12,6 +12,7 @@
 .w3ProviderList .pLogo {
     height: 5rem;
     width: auto;
+    margin: 1rem auto;
 }
 
 .w3ProviderList .w3Provider {
@@ -24,4 +25,6 @@
 .w3ProviderList .w3Provider button {
     border-color: #cccccc0a;
     color: #786969;
+    background-color:  #9f9b9b61;
+    background:  #9f9b9b61;
 }

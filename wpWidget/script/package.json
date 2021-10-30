@@ -4,8 +4,8 @@
   "description": "",
   "private": true,
   "scripts": {
-    "dev": "vite",
-    "build": "tsc",
+    
+    "watch": "webpack watch --stats verbose --mode=development ",
     "test": "ts-mocha -r tsconfig-paths/register tests/**/*.test.ts",
     "debug": "ts-mocha -r tsconfig-paths/register --inspect-brk tests/**/*.test.ts"
   },

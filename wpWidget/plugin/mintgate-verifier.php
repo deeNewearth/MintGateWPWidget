@@ -25,7 +25,7 @@
  * Domain Path:       /languages
  */
 
-xdebug_break();
+//xdebug_break();
 
 // If this file is called directly, abort.
 if ( ! defined( 'WPINC' ) ) {

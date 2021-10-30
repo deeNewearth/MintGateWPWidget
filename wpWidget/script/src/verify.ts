@@ -2,12 +2,15 @@ import {MintgateVerifier} from 'mintgate-verifier';
 
 export function verifyOwnerShip(){
     
+    const mv = new MintgateVerifier('mint-gated');
 
-    const mv = new MintgateVerifier();
+    if(!mv.token){
+        return;
+    }
 
-    mv.providers('app');
+    mv.load();
 
-    mv.checkLink();
+    //mv.checkLink();
 
     const check = async ()=>{
         try{

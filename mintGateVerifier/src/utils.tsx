@@ -1,3 +1,20 @@
+import { h, FunctionComponent, Fragment } from 'preact';
+import "./ripple.css";
+
+interface IAsyncResultBase {
+    isLoading?: boolean;
+    error?: Error;
+}
+
+export interface IAsyncResult<T> extends IAsyncResultBase {
+    result?: T;
+}
+
+export function Spinner(){
+    return <div class="ne-ripple"><div></div><div></div></div>;
+}
+
+
 export async function fetchJsonAsync<T>(responsePromise: Promise<Response>) {
     const responce = await checkFetchErrorAsync(responsePromise);
 
@@ -7,6 +24,15 @@ export async function fetchJsonAsync<T>(responsePromise: Promise<Response>) {
 export async function fetchStringAsync(responsePromise: Promise<Response>) {
     const responce = await checkFetchErrorAsync(responsePromise);
     return (await responce.text());
+}
+
+export const ShowError: FunctionComponent<{ error: Error | undefined }> = ({ error }) => {
+    if (!error)
+        return <Fragment>&nbsp;</Fragment>;
+
+    return <Fragment>
+        <div><pre className="preWarpped text-danger"> {error.message ?? `failed :${error}`}</pre></div>
+    </Fragment>;
 }
 
 
