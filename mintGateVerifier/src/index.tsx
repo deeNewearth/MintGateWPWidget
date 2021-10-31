@@ -45,13 +45,6 @@ export class MintgateVerifier {
             return;
         }
 
-        const nounce = rootDiv.getAttribute('nounce');
-
-        if (!nounce) {
-            console.error(`divId ${divId} is missing attribute nounce`);
-            return;
-        }
-
         const postId = rootDiv.getAttribute('postId');
 
         if (!postId) {
@@ -59,29 +52,9 @@ export class MintgateVerifier {
             return;
         }
 
-        const verifiedAddress = rootDiv.getAttribute('verifiedAddress')||undefined;
-
-
-        this.token = { divId, mintTokenId, nounce, postId, verifiedAddress };
+        this.token = { divId, mintTokenId, postId};
 
     }
-
-    async checkLink() {
-        try {
-
-
-            const done = await fetchJsonAsync<{ status: string }>(fetch('https://mgate.io/api/v2/links/linkid?id=2U0eV_BjlIh6'));
-
-            console.log((await done).status);
-
-
-        } catch (error) {
-            debugger;
-            console.error(error);
-        }
-
-    }
-
 
     load(styleName?: string) {
 
@@ -101,6 +74,8 @@ export class MintgateVerifier {
         render(<div className={styleName || 'w3ProviderList'}>
             <App {...this.token} />
         </div>, rootDiv);
+
+        document?.querySelectorAll(`.${this.token.divId}-loading`).forEach(el=> el.remove());
 
     }
 

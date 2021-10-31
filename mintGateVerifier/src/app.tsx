@@ -8,6 +8,8 @@ import './styles.css';
 import Torus from "@toruslabs/torus-embed";
 import Authereum from "authereum";
 
+import Holder from './gatedHolder';
+
 import { fetchJsonAsync, IAsyncResult, ShowError, Spinner, fetchStringAsync } from './utils';
 
 const providerOptions = {
@@ -24,45 +26,90 @@ const providerOptions = {
 export type TokenProps = {
     divId: string;
     mintTokenId: string;
-    nounce: string;
     postId: string;
-    verifiedAddress?: string;
+
 } | undefined;
 
+type Web3withAddress = {
+    web3?: Web3;
+    address?: string;
+}
 
-const App: FunctionComponent<TokenProps> = ({ nounce, mintTokenId, postId, verifiedAddress }) => {
+type WPContent ={
+    content?:string;
+    needsAccess?:boolean;
+}
 
-    const [web3Async, setWeb3] = useState<IAsyncResult<Web3>>();
-    const [contentAsync, setContent] = useState<IAsyncResult<string>>();
 
-    const [showMenu, setshowMenu] = useState<boolean>(false);
+const App: FunctionComponent<TokenProps> = ({ mintTokenId, postId }) => {
+
+    const [web3Async, setWeb3] = useState<IAsyncResult<Web3withAddress>>();
+    const [contentAsync, setContent] = useState<IAsyncResult<WPContent>>();
+
+    const [nounce, setNounce] = useState<string>();
+
+    const puchaseUrl =`https://www.mintgate.app/t/${mintTokenId}`;
+
+    const fetchContent = async () => {
+
+        try {
+            setContent({ isLoading: true });
+
+            const done = await fetchJsonAsync<{
+                status?: string,
+                error?: string,
+                content?: string,
+                address?: string,
+                nounce?: string
+            }>(
+                fetch(`/?rest_route=/ne-mintgate/v1/content/${encodeURIComponent(postId)}`));
+
+            if (!done?.address) {
+                console.log('no address sent from session');
+            }
+
+            if(done?.nounce){
+                setNounce(done.nounce)
+            }
+
+            if (done?.address && (done?.address != web3Async?.result?.address)) {
+                setWeb3({ result: { address: done.address } });
+            }
+
+            if (!!done?.error) {
+                throw new Error(done.error);
+            }
+
+            if (!!done?.content) {
+                setContent({ result: {content:done.content} });
+            } else {
+
+                if(done?.status =='noaccess'){
+                    setContent({ result: {needsAccess:true} });
+                }else{
+                    //if we don't have the content it's ok
+                    setContent({});
+                }
+
+            }
+
+
+        } catch (error) {
+            setContent({ error: error as Error });
+        }
+
+    };
+
 
     useEffect(() => {
 
-        if (!verifiedAddress && !web3Async?.result) {
+        if (web3Async && !web3Async.result) {
             setContent(undefined);
             return;
+        } else {
+            console.log('no web3 loading from session wallet')
         }
 
-        const fetchContent = async () => {
-
-            try {
-                setContent({ isLoading: true });
-
-                const done = await fetchJsonAsync<{ status?: string, error?: string, content?: string }>(
-                    fetch(`/?rest_route=/ne-mintgate/v1/content/${encodeURIComponent(postId)}`));
-
-                if (!!done?.error) {
-                    throw new Error(done.error);
-                }
-
-                setContent({ result: done.content });
-
-            } catch (error) {
-                setContent({ error: error as Error });
-            }
-
-        };
 
         fetchContent();
 
@@ -96,6 +143,10 @@ const App: FunctionComponent<TokenProps> = ({ nounce, mintTokenId, postId, verif
                 throw new Error('no wallet found');
             }
 
+            if(!nounce){
+                throw new Error('no nonce initialized');
+            }
+
             console.log(`wallet address = ${myAccounts[0]}`);
             const signed = await web3.eth.personal.sign(nounce, myAccounts[0], '');
 
@@ -116,7 +167,7 @@ const App: FunctionComponent<TokenProps> = ({ nounce, mintTokenId, postId, verif
                 throw new Error('The verified address does not match');
             }
 
-            setWeb3({ result: web3 });
+            setWeb3({ result: { web3, address: done?.address } });
 
         } catch (error) {
             setWeb3({ error: error as Error });
@@ -140,31 +191,63 @@ const App: FunctionComponent<TokenProps> = ({ nounce, mintTokenId, postId, verif
         return <Spinner prompt="waiting for content..." />;
     }
 
+    const onSignOut = async ()=>{
+        try {
+            setContent(undefined);
+            setWeb3(undefined);
+            const done = await fetchStringAsync(
+                fetch(`/?rest_route=/ne-mintgate/v1/signout`));
+        } catch (err) {
+            console.error(`failed to sign out ${err}`);
+        }
+        finally {
+            setWeb3({});
+        }
+    }
 
+    const ToShow = () => {
+        if (contentAsync?.result?.content) {
 
+            return <Holder address={web3Async?.result?.address||''}
+                {...{onSignOut}}
+            >
+                <div dangerouslySetInnerHTML={{ __html: contentAsync.result.content }} />
+            </Holder>;
+        }
 
-    return <Fragment>
-        {contentAsync?.result ? <div className="ne-gated-holder">
-            <div dangerouslySetInnerHTML={{ __html: contentAsync.result }} />
-            <div className={'ne-gated-lock ' +(showMenu?'ne-gated-lock-open':'ne-gated-lock-closed') }>
-                <button
-                    onClick={() => {
-                        setshowMenu(!showMenu);
-                    }}
-                >
-                </button>
-                {showMenu && <div className="ne-gated-lock-menu">
-                    <div>Hello1</div>
-                    <div>Hello2</div>
-                    <div>Hello3</div>
+        if (contentAsync?.result?.needsAccess) {
+
+            return <Holder address={web3Async?.result?.address||''}
+                {...{onSignOut}}
+            >
+                <div>
+                    <h4>This content is locked using Mintgate</h4>
+
+                    <p>Click <a href={puchaseUrl} target="_blank">here</a> to get access</p>
+
+                    <p><small><a class="secondary" href="#" onClick={e=>{
+                        e.preventDefault();
+                        fetchContent();
+                    }} >
+                        click here to refresh after getting access
+                    </a></small></p>
                 </div>
-                }
+            </Holder>;
+        }
 
-            </div>
-        </div> : <Fragment>
+        if (web3Async?.result) {
+            return <Holder address={web3Async?.result?.address||''}
+                {...{onSignOut}}
+            >
+                <div></div>
+            </Holder>;
+            
+        }
+
+        return <Fragment>
             <div className="thePrompt">
-                <p>This content is <strong>reserved for subscribers only using Mintgate</strong></p>
-                <p>To gain access or purchase please choose your wallet</p>
+                <p>This content is <strong>reserved for subscribers</strong><br />
+                    To gain access please choose your wallet</p>
             </div>
             <div className="theList">
                 {web3Modal.providers.map(pr => <div className="w3Provider" key={pr.name} >
@@ -185,7 +268,10 @@ const App: FunctionComponent<TokenProps> = ({ nounce, mintTokenId, postId, verif
                 }
             </div>
         </Fragment>
-        }
+    }
+
+    return <Fragment>
+        <ToShow />
         {web3Async?.error && <ShowError error={web3Async?.error} />}
         {contentAsync?.error && <ShowError error={contentAsync?.error} />}
     </Fragment>;

@@ -10,19 +10,5 @@ export function verifyOwnerShip(){
 
     mv.load();
 
-    //mv.checkLink();
-
-    const check = async ()=>{
-        try{
-            //await connect();
-            console.log(`hello world 1111 -> 777`);
-        }
-        catch(err){
-            console.log(err);
-        }
-    }
-
-    check();
-
 }
 

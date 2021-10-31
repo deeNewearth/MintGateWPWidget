@@ -13,11 +13,11 @@
  * @package           Mintgate_Verifier
  *
  * @wordpress-plugin
- * Plugin Name:       Mintgate Verifier
+ * Plugin Name:       NE Mintgate Verifier
  * Plugin URI:        https://newearthart.tech
- * Description:       This is a short description of what the plugin does. It's displayed in the WordPress admin area.
+ * Description:       Allows Pages and Posts to have gated access using https://mintgate.io
  * Version:           1.0.0
- * Author:            new earth art @ tech
+ * Author:            New Earth Art & Tech LLC
  * Author URI:        https://newearthart.tech
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt

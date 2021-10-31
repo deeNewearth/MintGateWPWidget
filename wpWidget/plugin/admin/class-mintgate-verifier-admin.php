@@ -198,7 +198,7 @@ class Mintgate_Verifier_Admin {
         if ( in_array( $post_type, $post_types ) ) {
             add_meta_box(
                 'mintgate_meta_box',
-                __( 'Mintgate access link', 'textdomain' ),
+                __( 'Mintgate gated access', 'textdomain' ),
                 array( $this, 'render_meta_box_content' ),
                 $post_type,
                 'side',
@@ -223,9 +223,14 @@ class Mintgate_Verifier_Admin {
         // Display the form, using the current value.
         ?>
         <label for="mintgate_new_field">
-            <?php _e( 'link url', 'textdomain' ); ?>
+            <?php _e( 'Mintgate Short ID:', 'textdomain' ); ?>
         </label>
-        <input type="text" id="mintgate_new_field" name="mintgate_new_field" value="<?php echo esc_attr( $value ); ?>" size="25" />
+
+        <input type="text" id="mintgate_new_field" name="mintgate_new_field"
+				placeholder="something like : MXU6DPSWB6EP"
+				 value="<?php echo esc_attr( $value ); ?>" size="25" />
+
+		<p><small>If short ID is filled, this content will be gated using Mintgate</small></p>
         <?php
     }
 

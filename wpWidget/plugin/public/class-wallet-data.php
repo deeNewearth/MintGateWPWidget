@@ -9,14 +9,26 @@ class WalletData{
     public $address ="";
 
     public static function fromSession(){
-        if(!array_key_exists('wallet',$_SESSION))
-            return null;
 
-        $serData = $_SESSION['wallet'];
-        if(!isset($serData) || strlen($serData) == 0)
+        if (!session_id()) {
             return null;
+        }
 
-        return unserialize($serData);
+        if(array_key_exists('wallet',$_SESSION)){
+            $serData = $_SESSION['wallet'];
+
+            if(isset($serData) && strlen($serData) > 0){
+                return unserialize($serData);
+            }
+
+        }
+
+        //there is no session wallet create new one
+        $wallet = WalletData::newNounce(); 
+        $_SESSION['wallet'] = serialize($wallet);
+
+        return $wallet;
+        
     }
 
 

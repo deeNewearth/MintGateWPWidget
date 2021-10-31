@@ -1,5 +1,6 @@
 <?php
 
+require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-mintgate-ep.php';
 
 /**
  * The public-facing functionality of the plugin.
@@ -41,6 +42,9 @@ class Mintgate_Verifier_Public {
 	 */
 	private $version;
 
+
+	private $ep;
+
 	/**
 	 * Initialize the class and set its properties.
 	 *
@@ -52,6 +56,8 @@ class Mintgate_Verifier_Public {
 
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
+
+		$this->ep = new Mintgate_Verifier_Ep();
 
 		if (!session_id()) {
 			session_set_cookie_params(0);
@@ -66,118 +72,11 @@ class Mintgate_Verifier_Public {
 	*/
 	public function register_api(){
 
-		/*
-		register_rest_route( 'ne-mintgate/v1', '/wallet/(?P<id>\d+)', array(
-			'methods' => 'GET',
-			'callback' => array($this,'checkWallet'),
-		  ) );
-		*/
-
-		register_rest_route( 'ne-mintgate/v1', '/wallet', array(
-			'methods' => 'POST',
-			'callback' => array($this,'checkWallet'),
-		  ) );
-
-		register_rest_route( 'ne-mintgate/v1', '/content/(?P<id>.+)', array(
-			'methods' => 'GET',
-			'callback' => array($this,'getContent'),
-		  ) );
-
+		$this->ep->register_api();
 
 	}
 
-	public function getContent(WP_REST_Request $request ) {
-		//xdebug_break();
-
-		try
-		{
-			$postId = $request->get_param('id');
-			
-			if(strlen($postId) == 0){
-				throw new Exception('no postId found');
-			}
-
-			require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-wallet-data.php';
-			$wallet =  WalletData::fromSession();
-			if(!$this->checkAccess($wallet,$postId)){
-				throw new Exception('you donot have access to this content');
-			}
-
-			$content = get_the_content( null, false, $postId);
- 
-    		$content = apply_filters( 'the_content', $content );
-
-			return rest_ensure_response(array(
-				"status"=>"success",
-				"content"=>$content
-			));
-
-		}
-		catch(Exception $e) {
-			return rest_ensure_response(array(
-				"status"=>"error",
-				"error"=>$e->getMessage()
-			));
-		}
-	}
-
-	//availbale at http://localhost:56395/?rest_route=/ne-mintgate/v1/wallet/1
-
-	public function checkWallet(WP_REST_Request $request ) {
-		// You can access parameters via direct array access on the object:
-		
-		//xdebug_break();
-
-		try
-		{
-			$signed = $request->get_param( 'signed' );
-
-			if(strlen($signed) == 0){
-				throw new Exception('no signature found');
-			}
-			
-			require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-wallet-data.php';
-			$wallet =  WalletData::fromSession();
-
-			if(!isset($wallet) || strlen($wallet->nounce) == 0  ){
-				throw new Exception('no wallet nounce found');
-			}
-
-			$checkUrl = getenv(WALLETCHECK_URL);
-			if(strlen($checkUrl) == 0){
-				$checkUrl = "https://walletcheck.newearthart.tech";
-			}
-
-			//$json = json_decode(file_get_contents("http://server.com/json.php"));
-
-			$results = Mintgate_Verifier_Public::jsonPost($checkUrl."/check",array(
-				"signed" => $signed,
-				"nounce" => $wallet->nounce
-			));
-
-			if(!isset($results) || strlen($results->address) == 0  ){
-				throw new Exception('failed to determine wallet address');
-			}
-
-			$wallet->address = $results->address;
-			$_SESSION['wallet'] = serialize($wallet);
-
-			return rest_ensure_response(array(
-				"status"=>"done",
-				"address"=>$wallet->address
-			));
-
-		}
-		catch(Exception $e) {
-
-			return rest_ensure_response(array(
-				"status"=>"error",
-				"error"=>$e->getMessage()
-			));
-		}
-		
-	}
-
+	
 	/**
 	 * Filters content
 	 *
@@ -201,31 +100,17 @@ class Mintgate_Verifier_Public {
 
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-wallet-data.php';
 		$wallet =  WalletData::fromSession();
-		
-		if(!isset($wallet)){
-			$wallet = WalletData::newNounce(); 
-			$_SESSION['wallet'] = serialize($wallet);
-		}
 
 		return "<div id=\"mint-gated\" "
 			
 			."tid=\"".esc_attr($tid)."\" "
 			."postId=\"".esc_attr(get_the_ID())."\" "
-			."nounce=\"".esc_attr($wallet->nounce)."\" "
-			."verifiedAddress=\"".esc_attr($wallet->address)."\" "
-			
-			."></div>";
-
-	}
-
-	///checks if the current wallet has access to the Post
-	private function checkAccess(WalletData $wallet, string $postId){
-		if(isset($wallet) && isset($wallet->address)){
-			return true;
-		}
 		
-		return false;
+			."></div>"
+			."<div class=\"mint-gated-loading\" ><div></div><div></div></div>";
+
 	}
+
 
 	private function tokenId(){
 
@@ -279,29 +164,6 @@ class Mintgate_Verifier_Public {
 
 	}
 
-	static private function jsonPost(string $url,array $data){
-
-		//xdebug_break();
-
-		$ch = curl_init($url);
-		
-		/* Setup request to send json via POST
-		$data = array(
-			'username' => 'codexworld',
-			'password' => '123456'
-		);
-		*/
-
-		$payload = json_encode($data);
-		
-		curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
-		curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		
-		$result = curl_exec($ch);
-		curl_close($ch);
-
-		return json_decode($result);
-	}
+	
 
 }

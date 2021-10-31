@@ -4,9 +4,9 @@
 }
 
 .w3ProviderList .thePrompt {
-    font-size: x-large;
+    font-size: medium;
     font-weight: bold;
-    margin: 1rem;
+    margin: 0.5em;
 }
 
 .w3ProviderList .pLogo {
@@ -31,6 +31,8 @@
 
 .w3ProviderList .ne-gated-holder{
     position: relative;
+    min-height: 5em;
+    padding-top: 5px;
 }
 
 .w3ProviderList .ne-gated-lock{
@@ -41,16 +43,22 @@
     
 }
 
-.w3ProviderList .ne-gated-lock-open button,
+.w3ProviderList .ne-gated-lock .ne-gated-lock-menu button,
+.w3ProviderList .ne-gated-lock-open .anchor-btn,
 .w3ProviderList .ne-gated-lock-open{
     background-color: #9e9e9ee6;
 }
 
-.w3ProviderList .ne-gated-lock-closed button{
+.w3ProviderList .ne-gated-lock-closed .anchor-btn{
     background-color: #fafafa2b;
 }
 
-.w3ProviderList .ne-gated-lock button{
+
+.w3ProviderList .ne-gated-holder a.secondary{
+    color:#786969;
+}
+
+.w3ProviderList .ne-gated-lock .anchor-btn{
     width: 35px;
     height: 35px;
     
@@ -62,6 +70,8 @@
 
 .w3ProviderList .ne-gated-lock .ne-gated-lock-menu{
     min-width: 9em;
-    padding: 0.2em;
+    padding: 0.2em 0.8em;
     text-align: left;
+    color: white;
+    font-size: medium;
 }
