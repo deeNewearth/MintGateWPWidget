@@ -5,4 +5,5 @@ RUN pecl install -f xdebug \
   && echo "xdebug.mode=debug" >> /usr/local/etc/php/conf.d/xdebug.ini \
   && echo "xdebug.client_host=host.docker.internal" >> /usr/local/etc/php/conf.d/xdebug.ini \
   && echo "xdebug.start_with_request=trigger" >> /usr/local/etc/php/conf.d/xdebug.ini \
+  && echo "error_log = /var/log/apache2/error.log" >> /usr/local/etc/php/conf.d/error-logging.ini \
   ;

@@ -1,6 +1,7 @@
 <?php
 
 require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-mintgate-ep.php';
+require_once plugin_dir_path( dirname( __FILE__ ) ) . 'utils/class-logging.php';
 
 /**
  * The public-facing functionality of the plugin.
@@ -44,6 +45,7 @@ class Mintgate_Verifier_Public {
 
 
 	private $ep;
+	private $logger;
 
 	/**
 	 * Initialize the class and set its properties.
@@ -57,7 +59,8 @@ class Mintgate_Verifier_Public {
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
 
-		$this->ep = new Mintgate_Verifier_Ep();
+		$this->logger = new DockerLogger();
+		$this->ep = new Mintgate_Verifier_Ep($this->logger);
 
 		if (!session_id()) {
 			session_set_cookie_params(0);
@@ -95,6 +98,7 @@ class Mintgate_Verifier_Public {
 		$options = get_option( 'ne_mintgate_plugin_options' );
 
 		if (strlen($options['api_key']) == 0 ||  strlen($options['userid']) == 0){
+			$this->logger->logWarn("NE Settings are not initialized");
 			return "<div class=\"ne_error ne_minigate_no_sesttings\">NE Settings are not initialized</div>";
 		}
 
@@ -118,11 +122,15 @@ class Mintgate_Verifier_Public {
 			return null;
 		}
 
-		$value = get_post_meta( get_the_ID(), 'mintgate_meta_link_value_key', true );
+		$myId = get_the_ID();
+		$value = get_post_meta( $myId, 'mintgate_meta_link_value_key', true );
 
 		if (strlen($value) == 0){
+			$this->logger->logInfo("no token id for ".$myId);
 			return null;
 		}
+
+		$this->logger->logInfo("token id for ".$myId." is ".$value);
 
 		return $value;
 

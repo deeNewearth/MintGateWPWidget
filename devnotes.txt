@@ -23,5 +23,9 @@ To create staging
 1) ensure the wordpress container is removed ( along with any volumes)
 2) 
 
+-----
+WORDPRESS debug info is available on DOcker logs
+
+
 
 

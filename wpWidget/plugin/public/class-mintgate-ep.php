@@ -2,6 +2,12 @@
 
 class Mintgate_Verifier_Ep {
 
+	private $logger;
+
+	public function __construct( $logger ) {
+		$this->logger = $logger;
+	}
+
     /**
 	 * Registers Rest API endpoint
 	 *
@@ -156,7 +162,7 @@ class Mintgate_Verifier_Ep {
 	public function checkWallet(WP_REST_Request $request ) {
 		// You can access parameters via direct array access on the object:
 		
-		//xdebug_break();
+		xdebug_break();
 
 		try
 		{
@@ -178,9 +184,11 @@ class Mintgate_Verifier_Ep {
 				$checkUrl = "https://walletcheck.newearthart.tech";
 			}
 
+			$this->logger->logInfo("using checkUrl ".$checkUrl);
+
 			//$json = json_decode(file_get_contents("http://server.com/json.php"));
 
-			$results = Mintgate_Verifier_Ep::jsonPost($checkUrl."/check",array(
+			$results = $this->jsonPost($checkUrl."/check",array(
 				"signed" => $signed,
 				"nounce" => $wallet->nounce
 			));
@@ -208,7 +216,7 @@ class Mintgate_Verifier_Ep {
 		
 	}
 
-    static private function jsonPost(string $url,array $data){
+    private function jsonPost(string $url,array $data){
 
 		//xdebug_break();
 
@@ -228,7 +236,16 @@ class Mintgate_Verifier_Ep {
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		
 		$result = curl_exec($ch);
+
+		if(false === $result){
+			$this->logger->logError('Curl post failed ['.strval(curl_errno($ch)). "] - error ->".curl_error($ch));
+		}
+
 		curl_close($ch);
+
+		if(false === $result){
+			return null;
+		}
 
 		return json_decode($result);
 	}
