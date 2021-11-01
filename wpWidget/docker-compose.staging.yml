@@ -1,0 +1,38 @@
+version: '2'
+
+services:
+
+  db:
+      image: mysql:5.7
+      environment:
+       MYSQL_ROOT_PASSWORD: somewordpress
+       MYSQL_DATABASE: wordpress
+       MYSQL_USER: wordpress
+       MYSQL_PASSWORD: wordpress
+      volumes:
+#      utility folder to easiy copy stuff back and forth
+       - ./tmp:/s-tmp
+
+  walletchecker: 
+    build: ../wallet-checker
+    image: test-wallet-checker
+    entrypoint: "npm run dev"
+    ports:
+      - 9229:9229
+    volumes:
+      - ../wallet-checker/src:/src
+
+  wordpress: 
+    image: testme1
+    
+    depends_on:
+      - db
+    ports:
+      - 56395:80
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+#      XDEBUG_CONFIG: remote_host=host.docker.internal remote_port=9000 remote_enable=1
+      PHP_EXTENSION_XDEBUG: 1
+      WALLETCHECK_URL: http://walletchecker:3300

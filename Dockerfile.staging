@@ -1,0 +1,19 @@
+FROM node:12.22.7-stretch as build
+
+WORKDIR /app
+COPY . .
+
+WORKDIR /app/mintGateVerifier
+RUN npm install
+
+WORKDIR /app/wpWidget/script
+RUN npm install && npm run build
+
+
+WORKDIR /app/wpWidget/plugin
+RUN apt-get update && apt-get install -y zip \
+  && zip -r ../mintgate-verifier.zip .
+
+FROM wordpress:5-php7.2-apache
+
+COPY --from=build /app/wpWidget/mintgate-verifier.zip /usr/src/wordpress/mintgate-verifier.zip

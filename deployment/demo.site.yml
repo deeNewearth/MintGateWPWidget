@@ -1,0 +1,258 @@
+
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: demo-ne-mintgate-ingress
+  namespace: demo-ne-mintgate
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/from-to-www-redirect: "true"
+spec:
+  tls:
+    - hosts:
+      - ne-mintgate.staging.newearthart.tech
+      secretName: demo-ne-mintgate-tls
+
+  rules:
+  - host: ne-mintgate.staging.newearthart.tech
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: wordpress 
+          servicePort: 80                    
+
+
+---
+
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: demo-ne-walletcheck-ingress
+  namespace: demo-ne-mintgate
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+spec:
+  tls:
+    - hosts:
+      - walletcheck.newearthart.tech
+      secretName: demo-ne-mintgate-tls
+
+  rules:
+  - host: walletcheck.newearthart.tech
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: walletcheck 
+          servicePort: 3300                    
+
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: wordpress
+  namespace: demo-ne-mintgate
+  labels:
+    app: wordpress
+spec:
+  ports:
+  - port: 80
+  selector:
+    app: wordpress
+
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: wp-uploads-pv-claim
+  namespace: demo-ne-mintgate
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+
+---
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wordpress
+  namespace: demo-ne-mintgate
+  labels:
+    app: wordpress
+spec:
+  selector:
+    matchLabels:
+        app: wordpress
+ 
+  template:
+    metadata:
+        labels:
+            app: wordpress
+    spec:
+        containers:
+        -   image: cloudconnect.scanrev.com:5000/ne-mintgate-verifier:1.0.3
+            name: wordpress
+            ports:
+            - containerPort: 80
+            volumeMounts:
+            - name: wordpress-uploads
+              mountPath: /var/www/html/wp-content/uploads
+
+            env:
+                -   name: WORDPRESS_DB_USER
+                    value: "wordpress"
+                -   name: WORDPRESS_DB_HOST
+                    value: "mysql"
+                -   name: WORDPRESS_DB_PASSWORD
+                    valueFrom:
+                        secretKeyRef:
+                            name: wp-secrets
+                            key: mysql_password
+
+        imagePullSecrets:
+        - name: secret-cloudconnect
+
+        volumes:
+        - name: wordpress-uploads
+          persistentVolumeClaim:
+            claimName: wp-uploads-pv-claim
+
+
+        initContainers:
+            -   name: init-wordpress
+                image: busybox:1.28
+                command: ['sh', '-c', 'until nslookup mysql; do echo waiting for es; sleep 2; done;']
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+    name: mysql
+    namespace: demo-ne-mintgate
+    labels:
+        app: mysql
+
+spec:
+    clusterIP: None
+    ports:
+    -   port: 3306
+    selector:
+        app: mysql
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-pv-claim
+  namespace: demo-ne-mintgate
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+
+---      
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: mysql
+    namespace: demo-ne-mintgate
+    labels:
+        app: mysql
+spec:
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+        app: mysql
+  template:
+    metadata:
+        labels:
+            app: mysql
+    spec:
+        containers:
+        -   name: mysql
+            image: mysql:5.6
+            volumeMounts:
+            -   mountPath: "/var/lib/mysql"
+                name: mysql-data
+            ports:
+            -   containerPort: 3306
+            env:
+            -   name: MYSQL_DATABASE
+                value: "wordpress"
+            -   name: MYSQL_USER
+                value: "wordpress"
+            -   name: MYSQL_ROOT_PASSWORD
+                valueFrom:
+                    secretKeyRef:
+                        name: wp-secrets
+                        key: mysql_root_password
+            -   name: MYSQL_PASSWORD
+                valueFrom:
+                    secretKeyRef:
+                        name: wp-secrets
+                        key: mysql_password
+
+        volumes:
+        -   name: mysql-data
+            persistentVolumeClaim:
+                claimName: mysql-pv-claim
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: walletcheck
+  namespace: demo-ne-mintgate
+  labels:
+    app: walletcheck
+spec:
+  ports:
+  - port: 3300
+  selector:
+    app: walletcheck
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: walletcheck
+    namespace: demo-ne-mintgate
+    labels:
+        app: walletcheck
+spec:
+  selector:
+    matchLabels:
+        app: walletcheck
+        
+  template:
+    metadata:
+        labels:
+            app: walletcheck
+            
+    spec:
+        containers:
+        -   name: walletcheck
+            image: cloudconnect.scanrev.com:5000/ne-mintgate-walletchecker:1.0.3
+            ports:
+            -   containerPort: 3300
+
+        imagePullSecrets:
+        - name: secret-cloudconnect
+

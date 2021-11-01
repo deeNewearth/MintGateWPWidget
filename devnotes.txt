@@ -16,4 +16,12 @@ docker-compose up
 /// to debug wallet checker open chrome://inspect
 
 
+https://kinsta.com/blog/publish-plugin-wordpress-plugin-directory/
+
+
+To create staging
+1) ensure the wordpress container is removed ( along with any volumes)
+2) 
+
+
 
