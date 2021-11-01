@@ -162,7 +162,7 @@ class Mintgate_Verifier_Ep {
 	public function checkWallet(WP_REST_Request $request ) {
 		// You can access parameters via direct array access on the object:
 		
-		xdebug_break();
+		//xdebug_break();
 
 		try
 		{
@@ -233,6 +233,8 @@ class Mintgate_Verifier_Ep {
 		
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		
 		$result = curl_exec($ch);
@@ -277,6 +279,8 @@ class Mintgate_Verifier_Ep {
 
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
 
         $result = curl_exec($ch);

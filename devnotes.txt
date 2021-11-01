@@ -26,6 +26,22 @@ To create staging
 -----
 WORDPRESS debug info is available on DOcker logs
 
+---
+To publish new build
+from explorer Run deployment/PushToHub.bat
+
+-- to deploy
+Update version in deployment/demo.site.ym and apply
+
+---- to test deploy build -----
+cd MintGateWPWidget
+docker build -t testme1 -f Dockerfile.staging .
+
+cd MintGateWPWidget\wpWidget
+docker rm wpwidget_wordpress_1
+docker-compose -f docker-compose.staging.yml up
+
+
 
 
 

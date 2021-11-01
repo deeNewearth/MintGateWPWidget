@@ -100,7 +100,7 @@ spec:
             app: wordpress
     spec:
         containers:
-        -   image: cloudconnect.scanrev.com:5000/ne-mintgate-verifier:1.0.3
+        -   image: cloudconnect.scanrev.com:5000/ne-mintgate-verifier:1.0.6
             name: wordpress
             ports:
             - containerPort: 80
@@ -109,6 +109,8 @@ spec:
               mountPath: /var/www/html/wp-content/uploads
 
             env:
+                -   name: LOG_LEVEL
+                    value: "0"
                 -   name: WORDPRESS_DB_USER
                     value: "wordpress"
                 -   name: WORDPRESS_DB_HOST
@@ -249,7 +251,7 @@ spec:
     spec:
         containers:
         -   name: walletcheck
-            image: cloudconnect.scanrev.com:5000/ne-mintgate-walletchecker:1.0.3
+            image: cloudconnect.scanrev.com:5000/ne-mintgate-walletchecker:1.0.6
             ports:
             -   containerPort: 3300
 

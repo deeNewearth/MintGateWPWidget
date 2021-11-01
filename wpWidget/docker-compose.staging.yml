@@ -36,3 +36,4 @@ services:
 #      XDEBUG_CONFIG: remote_host=host.docker.internal remote_port=9000 remote_enable=1
       PHP_EXTENSION_XDEBUG: 1
       WALLETCHECK_URL: http://walletchecker:3300
+      LOG_LEVEL: 0

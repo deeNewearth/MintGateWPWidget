@@ -16,4 +16,8 @@ RUN apt-get update && apt-get install -y zip \
 
 FROM wordpress:5-php7.2-apache
 
+RUN echo "error_log = /var/log/apache2/error.log" >> /usr/local/etc/php/conf.d/error-logging.ini \
+  ;
+
 COPY --from=build /app/wpWidget/mintgate-verifier.zip /usr/src/wordpress/mintgate-verifier.zip
+COPY --from=build /app/wpWidget/plugin /usr/src/wordpress/wp-content/plugins/mintgate-verifier
