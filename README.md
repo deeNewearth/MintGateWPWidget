@@ -2,6 +2,8 @@
 This is a wordpress plugin that uses MintGate’s token validation API to unlock access to Wordpress CMS pages or content modules based on token ownership
 
 
+[![IMAGE ALT TEXT](http://img.youtube.com/vi/HrllTGkM1l0/0.jpg)](https://youtu.be/HrllTGkM1l0 "NE Mintgate wordpress plugin")
+
 
 # DEMO and DOWNLOAD
 * We have a demo site with gated content at https://ne-mintgate.staging.newearthart.tech/2021/11/09/gated-content-test/
